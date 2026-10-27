@@ -16,7 +16,15 @@ Exercise 0 is a quiz answered on the course platform. Exercises 1–25 are imple
 
 ## Technologies
 
-No application is installed yet, so this repository has no dependencies. This section will be updated when the blog application is created and when later exercises add libraries.
+The blog application currently uses:
+
+- Next.js 16 (App Router)
+- React 19
+- TypeScript
+- Tailwind CSS, included by the recommended `create-next-app` setup
+- npm
+
+Later exercises will add libraries such as Drizzle ORM, PostgreSQL, and NextAuth. This list will be updated when those are installed.
 
 ## Repository structure
 
@@ -28,6 +36,8 @@ The course builds one blog application and extends it in every coding exercise. 
 | `.gitignore` | Keeps dependencies, build output, editor files, and local secrets out of Git |
 | `docs/submission.md` | Checklist to complete before submitting the repository |
 | `exercises/README.md` | How the 26 exercises map onto the single blog application |
+| `app/` | Next.js App Router pages, including `/` and `/blogs` |
+| `package.json` | npm scripts and dependencies |
 
 There is no separate folder per exercise. Each exercise changes the same application.
 
@@ -77,9 +87,22 @@ Exercise 18 and Exercise 19 use the same title on the course platform. Exercise 
 
 ## How to run the project
 
-This repository does not contain a runnable application yet. Installation and development commands will be added here when the blog application is created for Exercise 1.
+From the repository root:
 
-The course material uses npm. After the application exists, the development server is started with `npm run dev`.
+```bash
+npm install
+npm run dev
+```
+
+Open http://localhost:3000 for the home page and http://localhost:3000/blogs for the blog list.
+
+Other scripts:
+
+```bash
+npm run lint
+npm run build
+npm start
+```
 
 ## Learning goals
 
