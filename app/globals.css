@@ -102,3 +102,37 @@ body {
 .blog-card p {
   margin: 0.25rem 0;
 }
+
+.blog-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.form-field input {
+  font: inherit;
+  color: var(--foreground);
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: 0.4rem;
+  padding: 0.55rem 0.7rem;
+}
+
+.blog-form button {
+  font: inherit;
+  font-weight: 600;
+  width: fit-content;
+  color: var(--background);
+  background: var(--foreground);
+  border: 0;
+  border-radius: 0.4rem;
+  padding: 0.6rem 1rem;
+  cursor: pointer;
+}
