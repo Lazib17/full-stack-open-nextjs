@@ -125,7 +125,21 @@ body {
   padding: 0.55rem 0.7rem;
 }
 
-.blog-form button {
+.like-form {
+  margin-top: 1rem;
+}
+
+.search-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: end;
+  margin: 1.25rem 0;
+}
+
+.blog-form button,
+.like-form button,
+.search-form button {
   font: inherit;
   font-weight: 600;
   width: fit-content;

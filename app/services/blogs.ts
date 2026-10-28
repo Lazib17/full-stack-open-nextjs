@@ -34,6 +34,21 @@ export function getBlogs(): Blog[] {
   return blogs;
 }
 
+export function getBlogById(id: number): Blog | undefined {
+  return blogs.find((blog) => blog.id === id);
+}
+
+export function incrementBlogLikes(id: number): Blog | undefined {
+  const blog = getBlogById(id);
+
+  if (!blog) {
+    return undefined;
+  }
+
+  blog.likes += 1;
+  return blog;
+}
+
 export function addBlog(input: {
   title: string;
   author: string;
