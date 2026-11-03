@@ -1,6 +1,6 @@
 import { eq, sql } from "drizzle-orm";
 import { db } from "../../db";
-import { blogs } from "../../db/schema";
+import { blogs, users } from "../../db/schema";
 
 export type Blog = {
   id: number;
@@ -8,6 +8,7 @@ export type Blog = {
   author: string;
   url: string;
   likes: number;
+  userId: number;
 };
 
 export async function getBlogs(): Promise<Blog[]> {
@@ -24,6 +25,16 @@ export async function addBlog(input: {
   author: string;
   url: string;
 }): Promise<Blog> {
+  const [user] = await db
+    .select()
+    .from(users)
+    .orderBy(sql`RANDOM()`)
+    .limit(1);
+
+  if (!user) {
+    throw new Error("Add a user before creating a blog.");
+  }
+
   const rows = await db
     .insert(blogs)
     .values({
@@ -31,6 +42,7 @@ export async function addBlog(input: {
       author: input.author,
       url: input.url,
       likes: 0,
+      userId: user.id,
     })
     .returning();
 
