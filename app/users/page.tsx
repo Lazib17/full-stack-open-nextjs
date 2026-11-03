@@ -32,7 +32,7 @@ async function UserList() {
           {users.map((user) => (
             <li key={user.id} className="blog-card">
               <h2>
-                <Link href={`/users/${user.id}`}>{user.name}</Link>
+                <Link href={`/users/${user.username}`}>{user.name}</Link>
               </h2>
             </li>
           ))}

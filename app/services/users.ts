@@ -6,15 +6,9 @@ export async function getUsers() {
   return db.query.users.findMany();
 }
 
-export async function getUserById(id: number) {
+export async function getUserWithBlogs(username: string) {
   return db.query.users.findFirst({
-    where: eq(users.id, id),
-  });
-}
-
-export async function getUserWithBlogs(id: number) {
-  return db.query.users.findFirst({
-    where: eq(users.id, id),
+    where: eq(users.username, username),
     with: {
       blogs: true,
     },

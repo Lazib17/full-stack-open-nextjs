@@ -27,10 +27,10 @@ export async function createBlog(formData: FormData) {
     throw new Error("Title, author, and a valid http(s) URL are required.");
   }
 
-  const blog = await addBlog({ title, author, url });
+  await addBlog({ title, author, url });
   revalidatePath("/blogs");
   revalidatePath("/users");
-  revalidatePath(`/users/${blog.userId}`);
+  revalidatePath("/users/[username]", "page");
   redirect("/blogs");
 }
 
@@ -51,5 +51,5 @@ export async function likeBlog(formData: FormData) {
   revalidatePath(`/blogs/${id}`);
   revalidatePath("/blogs");
   revalidatePath("/users");
-  revalidatePath(`/users/${blog.userId}`);
+  revalidatePath("/users/[username]", "page");
 }

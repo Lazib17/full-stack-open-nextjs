@@ -6,7 +6,7 @@ import { getUserWithBlogs } from "../../services/users";
 export default function UserPage({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ username: string }>;
 }) {
   return (
     <Suspense fallback={<p className="page">Loading user...</p>}>
@@ -15,15 +15,13 @@ export default function UserPage({
   );
 }
 
-async function UserDetails({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-  const userId = Number(id);
-
-  if (!Number.isInteger(userId)) {
-    notFound();
-  }
-
-  const user = await getUserWithBlogs(userId);
+async function UserDetails({
+  params,
+}: {
+  params: Promise<{ username: string }>;
+}) {
+  const { username } = await params;
+  const user = await getUserWithBlogs(username);
 
   if (!user) {
     notFound();
