@@ -27,7 +27,7 @@ export async function createBlog(formData: FormData) {
     throw new Error("Title, author, and a valid http(s) URL are required.");
   }
 
-  addBlog({ title, author, url });
+  await addBlog({ title, author, url });
   revalidatePath("/blogs");
   redirect("/blogs");
 }
@@ -40,7 +40,7 @@ export async function likeBlog(formData: FormData) {
     throw new Error("A valid blog id is required.");
   }
 
-  const blog = incrementBlogLikes(id);
+  const blog = await incrementBlogLikes(id);
 
   if (!blog) {
     throw new Error("Blog not found.");

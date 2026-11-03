@@ -23,7 +23,7 @@ async function BlogDetails({ params }: { params: Promise<{ id: string }> }) {
     notFound();
   }
 
-  const blog = getBlogById(blogId);
+  const blog = await getBlogById(blogId);
 
   if (!blog) {
     notFound();

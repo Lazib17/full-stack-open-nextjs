@@ -34,14 +34,14 @@ async function BlogList({
   const { filter } = await searchParams;
   const query = readFilter(filter);
   const normalizedQuery = query.toLowerCase();
-  const blogs = [...getBlogs()]
+  const blogs = (await getBlogs())
     .filter((blog) => blog.title.toLowerCase().includes(normalizedQuery))
     .sort((a, b) => b.likes - a.likes);
 
   return (
     <main className="page">
       <h1>Blogs</h1>
-      <p className="intro">A list of blogs kept in memory by the server.</p>
+      <p className="intro">A list of blogs stored in PostgreSQL.</p>
       <p>
         <Link href="/blogs/new">Create a new blog</Link>
       </p>
