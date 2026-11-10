@@ -50,8 +50,23 @@ body {
   text-decoration: none;
 }
 
-.nav a:hover {
+.nav a:hover,
+.nav button:hover {
   text-decoration: underline;
+}
+
+.nav button {
+  font: inherit;
+  font-weight: 600;
+  color: var(--foreground);
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+.form-error {
+  color: #b91c1c;
 }
 
 .page {

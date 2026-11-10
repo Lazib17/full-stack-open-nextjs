@@ -2,7 +2,9 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { auth } from "@/auth";
 import { addBlog, incrementBlogLikes } from "../services/blogs";
+import { getCurrentUser } from "../services/session";
 
 function readField(formData: FormData, name: string): string {
   const value = formData.get(name);
@@ -19,6 +21,18 @@ function isHttpUrl(value: string): boolean {
 }
 
 export async function createBlog(formData: FormData) {
+  const session = await auth();
+
+  if (!session) {
+    redirect("/login");
+  }
+
+  const user = await getCurrentUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
   const title = readField(formData, "title");
   const author = readField(formData, "author");
   const url = readField(formData, "url");
@@ -27,7 +41,7 @@ export async function createBlog(formData: FormData) {
     throw new Error("Title, author, and a valid http(s) URL are required.");
   }
 
-  await addBlog({ title, author, url });
+  await addBlog({ title, author, url, userId: user.id });
   revalidatePath("/blogs");
   revalidatePath("/users");
   revalidatePath("/users/[username]", "page");
