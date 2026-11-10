@@ -20,7 +20,10 @@ export default function NavBar() {
             </button>
           </>
         ) : (
-          <Link href="/login">login</Link>
+          <>
+            <Link href="/login">login</Link>
+            <Link href="/register">register</Link>
+          </>
         )}
       </nav>
     </header>
