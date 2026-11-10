@@ -20,7 +20,14 @@ function isHttpUrl(value: string): boolean {
   }
 }
 
-export async function createBlog(formData: FormData) {
+export type CreateBlogState = {
+  error: string;
+};
+
+export async function createBlog(
+  _prevState: CreateBlogState,
+  formData: FormData,
+): Promise<CreateBlogState> {
   const session = await auth();
 
   if (!session) {
@@ -37,8 +44,20 @@ export async function createBlog(formData: FormData) {
   const author = readField(formData, "author");
   const url = readField(formData, "url");
 
-  if (!title || !author || !isHttpUrl(url)) {
-    throw new Error("Title, author, and a valid http(s) URL are required.");
+  if (title.length < 5) {
+    return { error: "Title must be at least 5 characters long" };
+  }
+
+  if (author.length < 5) {
+    return { error: "Author must be at least 5 characters long" };
+  }
+
+  if (url.length < 5) {
+    return { error: "URL must be at least 5 characters long" };
+  }
+
+  if (!isHttpUrl(url)) {
+    return { error: "URL must be a valid http(s) address" };
   }
 
   await addBlog({ title, author, url, userId: user.id });
