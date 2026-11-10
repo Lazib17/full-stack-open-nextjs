@@ -7,9 +7,23 @@ import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { users } from "@/db/schema";
 
+export type RegisterState = {
+  errors?: {
+    username?: string;
+    name?: string;
+    password?: string;
+    passwordConfirm?: string;
+  };
+};
+
 function readText(formData: FormData, name: string): string {
   const value = formData.get(name);
   return typeof value === "string" ? value.trim() : "";
+}
+
+function readPassword(formData: FormData, name: string): string {
+  const value = formData.get(name);
+  return typeof value === "string" ? value : "";
 }
 
 function isUniqueViolation(error: unknown): boolean {
@@ -37,26 +51,49 @@ function isUniqueViolation(error: unknown): boolean {
   return isUniqueViolation(candidate.cause);
 }
 
-export async function registerUser(formData: FormData) {
+export async function registerUser(
+  _prevState: RegisterState,
+  formData: FormData,
+): Promise<RegisterState> {
   const username = readText(formData, "username");
   const name = readText(formData, "name");
-  const passwordValue = formData.get("password");
-  const password = typeof passwordValue === "string" ? passwordValue : "";
+  const password = readPassword(formData, "password");
+  const passwordConfirm = readPassword(formData, "passwordConfirm");
+  const errors: NonNullable<RegisterState["errors"]> = {};
 
-  if (!username || !name || !password) {
-    redirect("/register?error=missing");
+  if (username.length < 4) {
+    errors.username = "Username must be at least 4 characters long";
   }
 
-  const existingUser = await db.query.users.findFirst({
-    where: eq(users.username, username),
-  });
+  if (!name) {
+    errors.name = "Name is required";
+  }
 
-  if (existingUser) {
-    redirect("/register?error=taken");
+  if (!password || password.length < 4) {
+    errors.password = "Password must be at least 4 characters long";
+  }
+
+  if (!passwordConfirm) {
+    errors.passwordConfirm = "Password confirmation is required";
+  } else if (password !== passwordConfirm) {
+    errors.passwordConfirm = "Passwords do not match";
+  }
+
+  if (!errors.username) {
+    const existingUser = await db.query.users.findFirst({
+      where: eq(users.username, username),
+    });
+
+    if (existingUser) {
+      errors.username = "This username is already taken";
+    }
+  }
+
+  if (Object.keys(errors).length > 0) {
+    return { errors };
   }
 
   const passwordHash = await bcrypt.hash(password, 10);
-  let usernameTaken = false;
 
   try {
     await db.insert(users).values({
@@ -65,15 +102,11 @@ export async function registerUser(formData: FormData) {
       passwordHash,
     });
   } catch (error) {
-    if (!isUniqueViolation(error)) {
-      throw error;
+    if (isUniqueViolation(error)) {
+      return { errors: { username: "This username is already taken" } };
     }
 
-    usernameTaken = true;
-  }
-
-  if (usernameTaken) {
-    redirect("/register?error=taken");
+    throw error;
   }
 
   revalidatePath("/users");
