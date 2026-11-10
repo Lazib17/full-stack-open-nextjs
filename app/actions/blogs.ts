@@ -6,9 +6,9 @@ import { auth } from "@/auth";
 import { addBlog, incrementBlogLikes } from "../services/blogs";
 import { getCurrentUser } from "../services/session";
 
-function readField(formData: FormData, name: string): string {
+function readRaw(formData: FormData, name: string): string {
   const value = formData.get(name);
-  return typeof value === "string" ? value.trim() : "";
+  return typeof value === "string" ? value : "";
 }
 
 function isHttpUrl(value: string): boolean {
@@ -20,14 +20,23 @@ function isHttpUrl(value: string): boolean {
   }
 }
 
-export type CreateBlogState = {
-  error: string;
+export type BlogFormState = {
+  errors?: {
+    title?: string;
+    author?: string;
+    url?: string;
+  };
+  values?: {
+    title: string;
+    author: string;
+    url: string;
+  };
 };
 
 export async function createBlog(
-  _prevState: CreateBlogState,
+  _prevState: BlogFormState,
   formData: FormData,
-): Promise<CreateBlogState> {
+): Promise<BlogFormState> {
   const session = await auth();
 
   if (!session) {
@@ -40,27 +49,38 @@ export async function createBlog(
     redirect("/login");
   }
 
-  const title = readField(formData, "title");
-  const author = readField(formData, "author");
-  const url = readField(formData, "url");
+  const title = readRaw(formData, "title");
+  const author = readRaw(formData, "author");
+  const url = readRaw(formData, "url");
+  const errors: NonNullable<BlogFormState["errors"]> = {};
 
-  if (title.length < 5) {
-    return { error: "Title must be at least 5 characters long" };
+  if (!title || title.trim().length < 5) {
+    errors.title = "Title must be at least 5 characters long";
   }
 
-  if (author.length < 5) {
-    return { error: "Author must be at least 5 characters long" };
+  if (!author || author.trim().length < 5) {
+    errors.author = "Author must be at least 5 characters long";
   }
 
-  if (url.length < 5) {
-    return { error: "URL must be at least 5 characters long" };
+  if (!url || url.trim().length < 5) {
+    errors.url = "URL must be at least 5 characters long";
+  } else if (!isHttpUrl(url.trim())) {
+    errors.url = "URL must be a valid http(s) address";
   }
 
-  if (!isHttpUrl(url)) {
-    return { error: "URL must be a valid http(s) address" };
+  if (Object.keys(errors).length > 0) {
+    return {
+      errors,
+      values: { title, author, url },
+    };
   }
 
-  await addBlog({ title, author, url, userId: user.id });
+  await addBlog({
+    title: title.trim(),
+    author: author.trim(),
+    url: url.trim(),
+    userId: user.id,
+  });
   revalidatePath("/blogs");
   revalidatePath("/users");
   revalidatePath("/users/[username]", "page");

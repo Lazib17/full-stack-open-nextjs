@@ -1,9 +1,9 @@
 "use client";
 
 import { useActionState } from "react";
-import { createBlog, type CreateBlogState } from "../../actions/blogs";
+import { createBlog, type BlogFormState } from "../../actions/blogs";
 
-const initialState: CreateBlogState = { error: "" };
+const initialState: BlogFormState = {};
 
 export default function BlogForm() {
   const [state, formAction] = useActionState(createBlog, initialState);
@@ -18,7 +18,13 @@ export default function BlogForm() {
           type="text"
           required
           minLength={5}
+          defaultValue={state.values?.title}
         />
+        {state.errors?.title ? (
+          <p className="form-error" role="alert">
+            {state.errors.title}
+          </p>
+        ) : null}
       </div>
       <div className="form-field">
         <label htmlFor="author">Author</label>
@@ -28,18 +34,31 @@ export default function BlogForm() {
           type="text"
           required
           minLength={5}
+          defaultValue={state.values?.author}
         />
+        {state.errors?.author ? (
+          <p className="form-error" role="alert">
+            {state.errors.author}
+          </p>
+        ) : null}
       </div>
       <div className="form-field">
         <label htmlFor="url">URL</label>
-        <input id="url" name="url" type="text" required minLength={5} />
+        <input
+          id="url"
+          name="url"
+          type="text"
+          required
+          minLength={5}
+          defaultValue={state.values?.url}
+        />
+        {state.errors?.url ? (
+          <p className="form-error" role="alert">
+            {state.errors.url}
+          </p>
+        ) : null}
       </div>
       <button type="submit">Create Blog</button>
-      {state.error ? (
-        <p className="form-error" role="alert">
-          {state.error}
-        </p>
-      ) : null}
     </form>
   );
 }
