@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { integer, pgTable, serial, text, unique } from "drizzle-orm/pg-core";
+import { boolean, integer, pgTable, serial, text, unique } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
@@ -30,6 +30,7 @@ export const readingList = pgTable(
     blogId: integer("blog_id")
       .notNull()
       .references(() => blogs.id, { onDelete: "cascade" }),
+    read: boolean("read").notNull().default(false),
   },
   (table) => [unique().on(table.userId, table.blogId)],
 );

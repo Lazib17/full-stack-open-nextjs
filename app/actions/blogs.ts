@@ -4,7 +4,11 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { addBlog, getBlogById, incrementBlogLikes } from "../services/blogs";
-import { addReadingListEntry, isInReadingList } from "../services/readingList";
+import {
+  addReadingListEntry,
+  isInReadingList,
+  markReadingListEntryRead,
+} from "../services/readingList";
 import { getCurrentUser } from "../services/session";
 
 function readRaw(formData: FormData, name: string): string {
@@ -178,4 +182,28 @@ export async function addToReadingList(formData: FormData) {
   }
 
   revalidatePath(`/blogs/${blog.id}`);
+}
+
+export async function markAsRead(formData: FormData) {
+  const session = await auth();
+
+  if (!session) {
+    redirect("/login");
+  }
+
+  const user = await getCurrentUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
+  const rawId = formData.get("blogId");
+  const blogId = typeof rawId === "string" ? Number(rawId) : Number.NaN;
+
+  if (!Number.isInteger(blogId)) {
+    throw new Error("A valid blog id is required.");
+  }
+
+  await markReadingListEntryRead(user.id, blogId);
+  revalidatePath("/me");
 }

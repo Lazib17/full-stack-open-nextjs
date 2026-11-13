@@ -43,6 +43,13 @@
       "when": 1794595429562,
       "tag": "0005_salty_fenris",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1794596995727,
+      "tag": "0006_shiny_kylun",
+      "breakpoints": true
     }
   ]
 }
