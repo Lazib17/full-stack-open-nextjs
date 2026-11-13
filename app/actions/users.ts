@@ -4,8 +4,10 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
+import { auth } from "@/auth";
 import { db } from "@/db";
 import { users } from "@/db/schema";
+import { getCurrentUser } from "../services/session";
 
 export type RegisterState = {
   errors?: {
@@ -111,4 +113,27 @@ export async function registerUser(
 
   revalidatePath("/users");
   redirect("/login");
+}
+
+export async function generateApiToken() {
+  const session = await auth();
+
+  if (!session) {
+    redirect("/login");
+  }
+
+  const currentUser = await getCurrentUser();
+
+  if (!currentUser) {
+    redirect("/login");
+  }
+
+  const newToken = crypto.randomUUID();
+
+  await db
+    .update(users)
+    .set({ token: newToken })
+    .where(eq(users.id, currentUser.id));
+
+  revalidatePath("/me");
 }

@@ -29,6 +29,13 @@
       "when": 1794325050710,
       "tag": "0003_brown_doctor_strange",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1794588650752,
+      "tag": "0004_first_shadow_king",
+      "breakpoints": true
     }
   ]
 }

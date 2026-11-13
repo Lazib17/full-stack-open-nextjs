@@ -59,13 +59,22 @@ export default function NavBar() {
           </Link>
         ))}
         {session ? (
-          <Link
-            href="/blogs/new"
-            className={navLinkClass(isCurrent(pathname, "/blogs/new"))}
-            aria-current={isCurrent(pathname, "/blogs/new") ? "page" : undefined}
-          >
-            Create
-          </Link>
+          <>
+            <Link
+              href="/me"
+              className={navLinkClass(isCurrent(pathname, "/me"))}
+              aria-current={isCurrent(pathname, "/me") ? "page" : undefined}
+            >
+              Profile
+            </Link>
+            <Link
+              href="/blogs/new"
+              className={navLinkClass(isCurrent(pathname, "/blogs/new"))}
+              aria-current={isCurrent(pathname, "/blogs/new") ? "page" : undefined}
+            >
+              Create
+            </Link>
+          </>
         ) : null}
         <div className="ml-auto flex items-center gap-3">
           {session ? (
