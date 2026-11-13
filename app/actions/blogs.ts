@@ -31,6 +31,7 @@ export type BlogFormState = {
     author: string;
     url: string;
   };
+  success?: boolean;
 };
 
 export async function createBlog(
@@ -72,6 +73,7 @@ export async function createBlog(
     return {
       errors,
       values: { title, author, url },
+      success: false,
     };
   }
 
@@ -84,7 +86,12 @@ export async function createBlog(
   revalidatePath("/blogs");
   revalidatePath("/users");
   revalidatePath("/users/[username]", "page");
-  redirect("/blogs");
+
+  return {
+    errors: {},
+    values: { title, author, url },
+    success: true,
+  };
 }
 
 export async function likeBlog(formData: FormData) {

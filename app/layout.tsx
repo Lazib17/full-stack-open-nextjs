@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import AuthSessionProvider from "@/app/components/SessionProvider";
 import NavBar from "@/app/components/NavBar";
+import Notification from "@/app/components/Notification";
+import { NotificationProvider } from "@/app/components/NotificationContext";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -27,8 +29,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col">
         <AuthSessionProvider>
-          <NavBar />
-          {children}
+          <NotificationProvider>
+            <NavBar />
+            <Notification />
+            {children}
+          </NotificationProvider>
         </AuthSessionProvider>
       </body>
     </html>
