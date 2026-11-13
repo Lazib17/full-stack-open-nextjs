@@ -3,7 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
-import { addBlog, incrementBlogLikes } from "../services/blogs";
+import { addBlog, getBlogById, incrementBlogLikes } from "../services/blogs";
+import { addReadingListEntry, isInReadingList } from "../services/readingList";
 import { getCurrentUser } from "../services/session";
 
 function readRaw(formData: FormData, name: string): string {
@@ -77,12 +78,13 @@ export async function createBlog(
     };
   }
 
-  await addBlog({
+  const blog = await addBlog({
     title: title.trim(),
     author: author.trim(),
     url: url.trim(),
     userId: user.id,
   });
+  await addReadingListEntry(user.id, blog.id);
   revalidatePath("/blogs");
   revalidatePath("/users");
   revalidatePath("/users/[username]", "page");
@@ -112,4 +114,68 @@ export async function likeBlog(formData: FormData) {
   revalidatePath("/blogs");
   revalidatePath("/users");
   revalidatePath("/users/[username]", "page");
+}
+
+function isUniqueViolation(error: unknown): boolean {
+  if (!error || typeof error !== "object") {
+    return false;
+  }
+
+  const candidate = error as {
+    code?: string;
+    message?: string;
+    cause?: unknown;
+  };
+
+  if (candidate.code === "23505") {
+    return true;
+  }
+
+  if (
+    typeof candidate.message === "string" &&
+    candidate.message.includes("reading_list_user_id_blog_id_unique")
+  ) {
+    return true;
+  }
+
+  return isUniqueViolation(candidate.cause);
+}
+
+export async function addToReadingList(formData: FormData) {
+  const session = await auth();
+
+  if (!session) {
+    redirect("/login");
+  }
+
+  const user = await getCurrentUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
+  const rawId = formData.get("blogId");
+  const blogId = typeof rawId === "string" ? Number(rawId) : Number.NaN;
+
+  if (!Number.isInteger(blogId)) {
+    throw new Error("A valid blog id is required.");
+  }
+
+  const blog = await getBlogById(blogId);
+
+  if (!blog) {
+    throw new Error("Blog not found.");
+  }
+
+  if (blog.userId !== user.id && !(await isInReadingList(user.id, blog.id))) {
+    try {
+      await addReadingListEntry(user.id, blog.id);
+    } catch (error) {
+      if (!isUniqueViolation(error)) {
+        throw error;
+      }
+    }
+  }
+
+  revalidatePath(`/blogs/${blog.id}`);
 }
