@@ -4,6 +4,14 @@ import { useActionState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createBlog, type BlogFormState } from "../../actions/blogs";
 import { useNotification } from "@/app/components/NotificationContext";
+import {
+  errorClass,
+  fieldClass,
+  formClass,
+  inputClass,
+  labelClass,
+  primaryButtonClass,
+} from "../../components/styles";
 
 const initialState: BlogFormState = {
   errors: {},
@@ -28,10 +36,13 @@ export default function BlogForm() {
   }, [state, showNotification, router]);
 
   return (
-    <form className="blog-form" action={formAction}>
-      <div className="form-field">
-        <label htmlFor="title">Title</label>
+    <form className={formClass} action={formAction}>
+      <div className={fieldClass}>
+        <label className={labelClass} htmlFor="title">
+          Title
+        </label>
         <input
+          className={inputClass}
           id="title"
           name="title"
           type="text"
@@ -40,14 +51,17 @@ export default function BlogForm() {
           defaultValue={state.values?.title}
         />
         {state.errors?.title ? (
-          <p className="form-error" role="alert">
+          <p className={errorClass} role="alert">
             {state.errors.title}
           </p>
         ) : null}
       </div>
-      <div className="form-field">
-        <label htmlFor="author">Author</label>
+      <div className={fieldClass}>
+        <label className={labelClass} htmlFor="author">
+          Author
+        </label>
         <input
+          className={inputClass}
           id="author"
           name="author"
           type="text"
@@ -56,14 +70,17 @@ export default function BlogForm() {
           defaultValue={state.values?.author}
         />
         {state.errors?.author ? (
-          <p className="form-error" role="alert">
+          <p className={errorClass} role="alert">
             {state.errors.author}
           </p>
         ) : null}
       </div>
-      <div className="form-field">
-        <label htmlFor="url">URL</label>
+      <div className={fieldClass}>
+        <label className={labelClass} htmlFor="url">
+          URL
+        </label>
         <input
+          className={inputClass}
           id="url"
           name="url"
           type="text"
@@ -72,12 +89,14 @@ export default function BlogForm() {
           defaultValue={state.values?.url}
         />
         {state.errors?.url ? (
-          <p className="form-error" role="alert">
+          <p className={errorClass} role="alert">
             {state.errors.url}
           </p>
         ) : null}
       </div>
-      <button type="submit">Create Blog</button>
+      <button className={primaryButtonClass} type="submit">
+        Create Blog
+      </button>
     </form>
   );
 }

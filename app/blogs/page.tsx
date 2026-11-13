@@ -1,5 +1,19 @@
 import { Suspense } from "react";
 import Link from "next/link";
+import {
+  cardClass,
+  cardListClass,
+  cardTitleLinkClass,
+  emptyClass,
+  inputClass,
+  labelClass,
+  linkClass,
+  metaClass,
+  mutedClass,
+  pageClass,
+  primaryButtonClass,
+  titleClass,
+} from "../components/styles";
 import { getBlogs } from "../services/blogs";
 
 export default function BlogsPage({
@@ -10,9 +24,9 @@ export default function BlogsPage({
   return (
     <Suspense
       fallback={
-        <main className="page">
-          <h1>Blogs</h1>
-          <p>Loading blogs...</p>
+        <main className={pageClass}>
+          <h1 className={titleClass}>Blogs</h1>
+          <p className={mutedClass}>Loading blogs...</p>
         </main>
       }
     >
@@ -39,46 +53,66 @@ async function BlogList({
     .sort((a, b) => b.likes - a.likes);
 
   return (
-    <main className="page">
-      <h1>Blogs</h1>
-      <p className="intro">A list of blogs stored in PostgreSQL.</p>
-      <p>
-        <Link href="/blogs/new">Create a new blog</Link>
+    <main className={pageClass}>
+      <h1 className={titleClass}>Blogs</h1>
+      <p className={mutedClass}>A list of blogs stored in PostgreSQL.</p>
+      <p className="mt-4">
+        <Link className={linkClass} href="/blogs/new">
+          Create a new blog
+        </Link>
       </p>
-      <form className="search-form" method="GET" action="/blogs">
-        <div className="form-field">
-          <label htmlFor="filter">Search by title</label>
+      <form
+        className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-end"
+        method="GET"
+        action="/blogs"
+      >
+        <div className="flex w-full max-w-md flex-col gap-1.5">
+          <label className={labelClass} htmlFor="filter">
+            Search by title
+          </label>
           <input
+            className={inputClass}
             id="filter"
             name="filter"
             type="text"
             defaultValue={query}
           />
         </div>
-        <button type="submit">Search</button>
+        <button className={primaryButtonClass} type="submit">
+          Search
+        </button>
       </form>
       {query.length > 0 && (
-        <p>
-          <Link href="/blogs">Show all blogs</Link>
+        <p className="mt-4">
+          <Link className={linkClass} href="/blogs">
+            Show all blogs
+          </Link>
         </p>
       )}
       {blogs.length === 0 ? (
-        <p>No blogs found.</p>
+        <p className={emptyClass}>No blogs found.</p>
       ) : (
-        <ul className="blog-list">
+        <ul className={cardListClass}>
           {blogs.map((blog) => (
-            <li key={blog.id} className="blog-card">
+            <li key={blog.id} className={cardClass}>
               <h2>
-                <Link href={`/blogs/${blog.id}`}>{blog.title}</Link>
+                <Link className={cardTitleLinkClass} href={`/blogs/${blog.id}`}>
+                  {blog.title}
+                </Link>
               </h2>
-              <p>Author: {blog.author}</p>
-              <p>
+              <p className={metaClass}>Author: {blog.author}</p>
+              <p className={`${metaClass} break-words`}>
                 URL:{" "}
-                <a href={blog.url} target="_blank" rel="noopener noreferrer">
+                <a
+                  className={linkClass}
+                  href={blog.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   {blog.url}
                 </a>
               </p>
-              <p>Likes: {blog.likes}</p>
+              <p className={metaClass}>Likes: {blog.likes}</p>
             </li>
           ))}
         </ul>

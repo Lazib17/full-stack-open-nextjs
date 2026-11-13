@@ -3,6 +3,17 @@
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import {
+  errorClass,
+  fieldClass,
+  formClass,
+  inputClass,
+  labelClass,
+  narrowPageClass,
+  panelClass,
+  primaryButtonClass,
+  titleClass,
+} from "../components/styles";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -29,20 +40,40 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="page">
-      <h1>Login</h1>
-      {error ? <p className="form-error">{error}</p> : null}
-      <form className="blog-form" onSubmit={handleSubmit}>
-        <div className="form-field">
-          <label htmlFor="username">Username</label>
-          <input id="username" name="username" type="text" required />
-        </div>
-        <div className="form-field">
-          <label htmlFor="password">Password</label>
-          <input id="password" name="password" type="password" required />
-        </div>
-        <button type="submit">Login</button>
-      </form>
+    <main className={narrowPageClass}>
+      <section className={panelClass}>
+        <h1 className={titleClass}>Login</h1>
+        {error ? <p className={`${errorClass} mt-4`}>{error}</p> : null}
+        <form className={formClass} onSubmit={handleSubmit}>
+          <div className={fieldClass}>
+            <label className={labelClass} htmlFor="username">
+              Username
+            </label>
+            <input
+              className={inputClass}
+              id="username"
+              name="username"
+              type="text"
+              required
+            />
+          </div>
+          <div className={fieldClass}>
+            <label className={labelClass} htmlFor="password">
+              Password
+            </label>
+            <input
+              className={inputClass}
+              id="password"
+              name="password"
+              type="password"
+              required
+            />
+          </div>
+          <button className={primaryButtonClass} type="submit">
+            Login
+          </button>
+        </form>
+      </section>
     </main>
   );
 }

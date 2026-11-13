@@ -15,9 +15,9 @@ export default function Notification() {
       : "bg-red-600 text-white";
 
   return (
-    <div className="mx-auto w-full max-w-[40rem] px-5 pt-4">
+    <div className="mx-auto w-full max-w-5xl px-4 pt-4 sm:px-6">
       <div
-        className={`${notificationClasses} mb-3 rounded px-4 py-3`}
+        className={`${notificationClasses} rounded-lg px-4 py-3 shadow-sm`}
         role="status"
       >
         {message}
